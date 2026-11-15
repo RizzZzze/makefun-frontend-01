@@ -1,0 +1,14 @@
+import { date, esc, money } from './main.js';
+
+export function profile(p, ranking, handle) {
+  const record = p.record || {}, solutions = [...(p.solutions || [])].sort((a, b) => (a.placement || Infinity) - (b.placement || Infinity));
+  const payouts = p.payouts || [], avatar = p.image || p.avatar;
+  const avatarUrl = typeof avatar === 'string' ? (avatar.startsWith('/') ? `https://make.fun${avatar}` : avatar) : `https://make.fun/api/profiles/${encodeURIComponent(p.handle || handle)}/picture.png`;
+  const display = p.display_name || p.displayName || p.handle || handle;
+  return `<section class="profile-page"><nav class="breadcrumb"><a href="#/">Board</a><span>/</span><span>Profile</span></nav>
+    <header class="profile-heading"><p class="eyebrow">BUILDER PROFILE</p><div class="profile-title-row">${avatarUrl ? `<img class="profile-avatar" crossorigin="anonymous" src="${esc(avatarUrl)}" alt="" onerror="this.remove()">` : `<span class="profile-avatar fallback-avatar" aria-hidden="true">${esc(String(display).slice(0, 1).toUpperCase())}</span>`}<h1>${esc(display)}</h1></div><p class="profile-handle">@${esc(p.handle || handle)}${ranking?.account?.rank ? ` <span>·</span> Ranked #${esc(ranking.account.rank)}` : ''}</p><p class="joined-line">Joined ${date(p.joined_at || p.joinedAt, { month: 'long', year: 'numeric' })}</p></header>
+    <section class="prize-total"><small>PRIZE MONEY PAID · ${payouts.length} ${payouts.length === 1 ? 'PAYOUT' : 'PAYOUTS'}</small><strong>${money(record.prize_usd ?? payouts.reduce((sum, item) => sum + Number(item.amount_usd || 0), 0))}</strong></section>
+    <div class="profile-stats"><div><strong>${Number(record.competitions_won || 0).toLocaleString()}</strong><small>WON</small></div><div><strong>${Number(record.podium_finishes || 0).toLocaleString()}</strong><small>PODIUMS</small></div><div><strong>${Number(record.competitions_placed || 0).toLocaleString()}</strong><small>PLACED</small></div><div><strong>${Number(record.competitions_entered || 0).toLocaleString()}</strong><small>ENTERED</small></div></div>
+    <section class="profile-entries"><div class="section-heading"><h2>Entries</h2><span>${solutions.length} public</span></div><table class="entries-table"><thead><tr><th>Place</th><th>Competition / entry</th><th>Prize</th><th>Entered</th></tr></thead><tbody>${solutions.map(s => `<tr><td class="place-cell">${s.placement != null ? `#${esc(s.placement)}` : '—'}</td><td><a href="#/bounty/${encodeURIComponent(s.competition?.slug || '')}">${esc(s.competition?.title || s.title || 'Competition')}</a><small>${esc(s.title || 'Entry')}</small></td><td class="prize-cell">${s.prize_usd != null ? money(s.prize_usd) : '—'}</td><td>${s.entered_at ? date(s.entered_at, { month: 'short', day: 'numeric' }) : '—'}</td></tr>`).join('') || '<tr><td colspan="4" class="empty-table">No public entries yet.</td></tr>'}</tbody></table></section>
+  </section>`;
+}
