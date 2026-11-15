@@ -36,6 +36,8 @@ async function render() {
     }));
   }
   window.scrollTo(0, 0);
+  const lazy = app.querySelector('.markdown-lazy');
+  if (lazy) import('./markdown.js').then(({renderMarkdown}) => { lazy.innerHTML = renderMarkdown(lazy.dataset.md); });
   window.__shotReady = true;
  } catch (error) { app.innerHTML = '<h1>Unable to load live data</h1><p>Please check your connection and try again.</p><a href="#/">All bounties</a>'; }
 }

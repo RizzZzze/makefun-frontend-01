@@ -10,26 +10,31 @@ const fee = (b) => (b.entryFeeUsd ? `${money(b.entryFeeUsd)} entry fee` : '');
 
 export function board(data) {
   const items = data.items || [];
+  const isEnded = b => b.ended || (b.deadline && Date.parse(b.deadline) < Date.now());
+  const open = items.filter(b => !isEnded(b) && (!b.status || b.status === 'open')).sort((a,b) => Number(Boolean(b.entryFeeUsd))-Number(Boolean(a.entryFeeUsd)));
+  const ended = items.filter(isEnded);
   const page = Math.max(0, Number(data.page || 0));
-  const pageItems = items.slice(page * 10, page * 10 + 10);
+  const pageItems = open.slice(page * 10, page * 10 + 10);
   const rows = pageItems
     .map(
       (b) => `
-      <li>
+      <li class="board-card${b.imageUrl || b.thumbnailUrl || b.image ? ' has-image' : ''}">
+        ${b.imageUrl || b.thumbnailUrl || b.image ? `<img loading="lazy" src="${esc(b.imageUrl || b.thumbnailUrl || b.image)}" alt="" onerror="this.hidden=true">` : ''}
         <a href="#/bounty/${encodeURIComponent(b.slug)}">${esc(b.title)}</a>
         <span class="board-pot"><small>Live pot</small>${pot(b)}</span>
-        <span><small>Entry</small>${fee(b) || 'Free'}</span>
+        <span><small>Entry</small>${fee(b) ? `<b class="fee">${fee(b)}</b>` : '<b class="free">No fee</b>'}</span>
         <span><small>Time left</small>${timeLeft(b.deadline)}</span>
         <span><small>Entries</small>${b.submissionCount} ${b.submissionCount === 1 ? 'entry' : 'entries'}</span>
       </li>`,
     )
     .join('');
-  return `<h1>Open bounties</h1><ul class="board">${rows || '<li>No open bounties.</li>'}</ul><nav class="pagination">${page > 0 ? `<button data-page="${page - 1}">Previous</button>` : ''}${(page + 1) * 10 < items.length ? `<button data-page="${page + 1}">Next</button>` : ''}</nav>`;
+  const endedRows = ended.map(b => `<li class="ended"><a href="#/bounty/${encodeURIComponent(b.slug)}">${esc(b.title)}</a><span>Ended</span><span>${pot(b)}</span></li>`).join('');
+  return `<h1>Open bounties</h1><ul class="board">${rows || '<li>No open bounties.</li>'}</ul><nav class="pagination">${page > 0 ? `<button data-page="${page - 1}">Previous</button>` : ''}${(page + 1) * 10 < open.length ? `<button data-page="${page + 1}">Next</button>` : ''}</nav><h2>Ended bounties</h2><ul class="board ended-list">${endedRows || '<li>None</li>'}</ul>`;
 }
 
 export function bounty(b) {
   return `
-    <p><a href="#/">All bounties</a></p>
+    <p class="section-nav"><a href="#/">All bounties</a> · <a href="#description">Description</a> · <a href="#rewards">Rewards</a></p>
     <h1>${esc(b.title)}</h1>
     <p>${esc(b.summary)}</p>
     <dl class="bounty-facts">
@@ -38,8 +43,7 @@ export function bounty(b) {
       <dt>Time left</dt><dd>${timeLeft(b.deadline)} <small>· ${date(b.deadline)}</small></dd>
       <dt>Entries</dt><dd>${b.submissionCount}</dd>
     </dl>
-    <p><a href="#/bounty/${encodeURIComponent(b.slug)}/leaderboard">View leaderboard →</a></p><h2>Description</h2>
-    <div class="description">${esc(b.description)}</div><h2>Rules</h2><div class="description">${esc(b.rules || '')}</div><h2>Rewards</h2><table><thead><tr><th>Place</th><th>Amount</th></tr></thead><tbody>${Object.entries(b.rewards || {}).map(([place, amount]) => `<tr><td>#${esc(place)}</td><td>${money(amount)}</td></tr>`).join('')}</tbody></table>`;
+    <p><a href="#/bounty/${encodeURIComponent(b.slug)}/leaderboard">View leaderboard →</a></p><h2 id="rewards">Rewards</h2><table><thead><tr><th>Place</th><th>Amount</th></tr></thead><tbody>${Object.entries(b.rewards || {}).map(([place, amount]) => `<tr><td>#${esc(place)}</td><td>${money(amount)}</td></tr>`).join('')}</tbody></table><h2 id="description">Description</h2><div class="description markdown-lazy" data-md="${esc(b.description || '')}">Loading description…</div><h2>Rules</h2><div class="description">${esc(b.rules || '')}</div>`;
 }
 
 export function leaderboard(data, slug) {
