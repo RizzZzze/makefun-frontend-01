@@ -1,0 +1,3 @@
+const manifest='LIGHT paper theme · board / bounty / leaderboard / profile · ETag revalidation · reusable leaderboard rows · 30s clock that asks the API nothing';
+async function route(){window.__shotReady=false;document.querySelector('#app').setAttribute('aria-busy','true');try{const v=await import('./views.js');window.refreshLive=v.updateClockCounters;await v.routeView();window.__shotReady=true}catch(e){document.querySelector('#app').textContent=e.message+' — make.fun did not answer; reload to try again'}finally{document.querySelector('#app').removeAttribute('aria-busy')}}
+window.onhashchange=route;route();

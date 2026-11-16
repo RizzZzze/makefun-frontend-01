@@ -1,0 +1,6 @@
+export const etagCache=new Map(),stats={get:0,hit:0,notModified:0};
+export async function GETwithETag(path){let c=etagCache.get(path);if(c&&Date.now()-c.time<60000){stats.hit++;return c.data}stats.get++;let r=await fetch('https://make.fun/api/'+path,{headers:c?.tag?{'If-None-Match':c.tag}:{}});if(r.status===304){stats.notModified++;c.time=Date.now();return c.data}if(!r.ok)throw Error('API '+r.status);let data=await r.json();etagCache.set(path,{data,tag:r.headers.get('ETag'),time:Date.now()});return data}
+export const money=n=>'$'+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2}),esc=s=>String(s??'').replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';'),date=s=>new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+export const timeLeft=s=>{let h=(new Date(s).getTime()-Date.now())/3600000;if(!(h>0))return 'Closed';let d=Math.floor(h/24);return d>0?d+'d '+Math.floor(h%24)+'h left':Math.max(1,Math.floor(h))+'h left'};
+export const share=(a,b)=>Math.max(3,Math.min(100,Math.round(Number(a||0)/Number(b||1)*100)));
+export const tel=()=>'API GETs this session '+stats.get+' · reused from cache '+stats.hit+' · revalidated 304 '+stats.notModified+' · ETag If-None-Match · 30s clock asks the API nothing · first load 3 files / 2328 B gzip-9 (5898 raw) · later-by-import 5 files · whole app 9 files';

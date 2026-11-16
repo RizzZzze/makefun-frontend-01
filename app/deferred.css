@@ -1,0 +1,32 @@
+.deck{background:var(--card);border:1px solid var(--line);padding:24px}
+.pagehead{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.leaderboard-table{width:100%;border-collapse:collapse;margin:22px 0 18px;font-size:13px}
+.leaderboard-table th,.leaderboard-table td{text-align:left;border-bottom:1px solid #e2e6da;padding:11px 9px;font-variant-numeric:tabular-nums}
+.leaderboard-table th{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--mut);font-weight:700}
+.leaderboard-table td:first-child{color:var(--acc);font-weight:700}
+.leaderboard-table tr[hidden]{display:none}
+.leaderboard-table small{display:block;color:var(--mut);font-size:11px;margin-top:3px}
+.pager{display:flex;align-items:center;gap:14px;font-size:12px;justify-content:flex-end}
+button{font:inherit;background:var(--acc);color:#fff;border:0;padding:11px 22px;font-weight:700;letter-spacing:.5px;cursor:pointer}
+button:disabled{background:#c3ccb6;color:#5d6857;cursor:default}
+.profile{max-width:920px;margin:0 auto}
+.profile-avatar{width:96px;height:96px;object-fit:cover;border:1px solid var(--line);background:#e7ecdd}
+.profilemetrics{display:flex;flex-wrap:wrap;gap:30px;margin:26px 0;padding:20px 0;border-block:1px solid var(--line)}
+.profilemetrics b{display:block;font-size:27px;letter-spacing:-1px}
+.profilemetrics span{font-size:10px;letter-spacing:1.4px;color:var(--mut);text-transform:uppercase}
+.entries-table{width:100%;border-collapse:collapse;font-size:13px}
+.entries-table td{border-bottom:1px solid #e2e6da;padding:11px 9px;vertical-align:top}
+.entries-table td:last-child{text-align:right;white-space:nowrap;color:var(--acc);font-weight:600}
+.description h3{font-size:13px;letter-spacing:1.2px;text-transform:uppercase;margin-top:20px}
+.description p,.description li{overflow-wrap:anywhere;line-height:1.6;color:var(--mut)}
+.description code{background:#eef1e4;padding:1px 4px;font-size:12px}
+.description strong{color:var(--ink)}
+@media(max-width:600px){
+.deck{padding:14px}
+.leaderboard-table{display:block;overflow-x:auto;font-size:12px}
+.leaderboard-table th,.leaderboard-table td{padding:9px 6px}
+.profilemetrics{gap:18px}
+.profile-avatar{width:72px;height:72px}
+.entries-table td{padding:9px 5px}
+.description p,.description li{overflow-wrap:anywhere}
+}
