@@ -1,5 +1,1 @@
-[
-  { "file": "1-board.jpg", "path": "#/", "viewport": { "width": 1280, "height": 800 } },
-  { "file": "2-bounty.jpg", "path": "#/bounty/tiny-chess-01/leaderboard?phase=dev", "viewport": { "width": 1280, "height": 800 } },
-  { "file": "3-leaderboard.jpg", "path": "#/profile/gentle-badger-68", "viewport": { "width": 1280, "height": 800 } }
-]
+[{"file":"1-cover.jpg","route":"#/","viewport":{"width":1280,"height":800}},{"file":"2-leaderboard.jpg","route":"#/bounty/tiny-chess-01/dev","viewport":{"width":1280,"height":800}},{"file":"3-profile.jpg","route":"#/profile/gentle-badger-68","viewport":{"width":1280,"height":800}}]
